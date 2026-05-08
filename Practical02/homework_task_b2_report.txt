@@ -1,0 +1,28 @@
+Foods-api roles
+
+app.use(express.json()) -> The middleware that enables the server to automatically parse 
+the incoming request bodies that are in JSON format. Without this,
+re.body would be undefined and the server would not be able to read data sent in POST or PUT requests.
+
+req.body -> This object contains the data sent by the client in the request body. 
+When I created { "name": "Apple", "calories": 95 } in the body, and the server accesses it through req.body.
+
+req.query -> This object holds query string parameters from the URL. A request to /foods/123, the value 123
+is available as req.params.id. It is essential for identifying which specific food resource to update or delete.
+
+HTTP methods, for GET, it reads and retrieves resources
+for POST, it creates and adds a new resource
+for PUT, it updates and modifies an existing resource identified by its ID
+for DELETE, it removes a resource from the system.
+This ensures consistency and clarity in how clients interact with the APIs
+
+200 OK: Indicates a successful request. Commonly used for GET, PUT, or DELETE when the operation completes without issues.
+
+201 Created: Returned when a new resource is successfully created, such as when a POST request adds a new food item.
+
+400 Bad Request: Signals that the client’s request is invalid, often due to missing required fields or incorrect data format.
+
+404 Not Found: Used when the requested resource does not exist. For example, trying to update or delete a food item with an ID that is not in the array.
+
+500 Internal Server Error: Represents unexpected errors on the server side. This usually indicates a bug or unhandled exception in the server code.
+

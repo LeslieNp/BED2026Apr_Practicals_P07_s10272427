@@ -1,0 +1,32 @@
+=== Reflection ===
+In this practical, I learned how to connect a Node.js application to a Microsoft SQL 
+Server database using the mssql package. I understood how to perform CRUD operations 
+using SQL queries directly inside route handlers. One challenge I faced was configuring 
+the TCP/IP settings in SQL Server Configuration Manager to allow the connection. Also,
+I could not open my SQL and had to take abit of time to figure that out. Thanks to last
+weeks lesson, I had no issues with my postman this time.
+
+=== Q&A ===
+
+Q1: How easy or difficult is it to read and understand what's happening in each route 
+handler compared to when the database logic was in separate functions?
+
+It is more difficult to read because each route handler contains a lot of code doing 
+multiple jobs at once — handling the request, connecting to the database, executing 
+queries, and handling errors. This makes the code long and harder to understand quickly.
+
+Q2: If you found a bug in how books are created in the database, which version of app.js 
+would make it easiest to isolate and fix that bug?
+
+A version where the database logic is separated into its own function would be easier 
+to fix, because you can go directly to that function without reading through all the 
+route handling code. In the current version everything is mixed together making it 
+harder to isolate the bug.
+
+Q3: Did you face any challenges while implementing this practical?
+
+Yes, the main challenge was configuring SQL Server to accept TCP/IP connections on 
+port 1433. The connection kept timing out until the IP addresses were enabled in SQL 
+Server Configuration Manager and the instance name was separated from the server name 
+in dbConfig.js.
+

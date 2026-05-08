@@ -1,0 +1,21 @@
+Write a brief reflection (2-3 sentences) on the concepts you learned during Part A of the practical. 
+
+In this practical, I learned how REST APIs work using Node.js and Express, 
+and how Postman is used to send requests to test the server. 
+I now understand how different HTTP methods like GET, POST, PUT, and DELETE are used to create, read, update, and delete data.
+By building the CRUD functions for the “foods” resource, 
+I also got a better idea of how routes work and how data can be stored temporarily using an array in the backend. 
+One issue I faced was getting the POST request to work properly, 
+which made me realise how important it is to have the correct request format and ensure the server is running properly. 
+Overall, this practical helped me understand how APIs work in real applications.
+
+QnA
+a. Why use POST for creating resources and PUT for updating?
+POST is used when creating a new resource because the server generates and stores a new entry based on the data that we sent. 
+PUT is used when updating because it modifies an existing resource using its ID. 
+In conclusion, Post is for adding stuff and Put is used when we want to edit the stuff
+
+b. What status code should be returned when attempting to update a non-existent resource
+The correct status code is 404 Not Found because the resource does not exist on the server, so it cannot be updated.
+When I was doing the class work, my Postman kept showint 404, hence I knew my resource did not exist on the server,
+not allowing the system to register and update it.
