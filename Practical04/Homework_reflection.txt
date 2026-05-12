@@ -1,0 +1,109 @@
+Task 1 - Reflection on Refactoring
+
+1.  What were the main changes you made to refactor the code into MVC architecture? Describe how you moved code between files and folders.
+
+The main change was splitting the one huge app.js into multiple files based on the responsibility.
+I then created three new folders inside students-api : models/, controllers/, and middlewares/.
+The database query logic (sql.connect, SELECT/INSERT/UPDATE/DELETE queries) was
+moved from each route handler in app.js into a separate file called bookModel.js
+inside the models/ folder. The request handling logic (extracting req.params, req.body,
+sending res.json or res.status) was moved into bookController.js inside the controllers/
+folder. The app.js file became much shorter and now only handles server setup and
+route definitions, linking endpoints to controller functions.
+
+2. What challenges did you face during the refactoring process?
+
+The main challenge was getting the import paths correct. When moving files into
+subfolders, I had to use "../dbConfig" instead of "./dbConfig" because the model
+file is one folder deeper. I also accidentally pasted the Books API code into the
+Students API app.js at one point, which caused the server to crash silently because
+it was trying to import a controller that didn't exist in that folder. Another
+challenge was making sure the module.exports at the bottom of each file correctly
+listed all the functions other files needed to use.
+
+
+3. How does the MVC structure change the way you think about adding new features
+or modifying existing ones compared to the previous non-MVC structure?
+
+With MVC, I now think about new features in layers instead of as one big block.
+If I want to add a new endpoint, I ask three separate questions: what database
+query do I need (Model), how should the request be handled (Controller), and what
+URL should this be linked to (Route). Each part has a clear home. In the old
+non-MVC structure, I would write everything in one giant route handler, which
+made it harder to think clearly about each piece.
+
+
+4. In what specific ways do you think the MVC version is more organized or easier
+to understand and maintain than the previous version where all logic was in app.js?
+
+The MVC version is more organized in several ways. First, file sizes are smaller
+and each file has one clear purpose, so it's easier to find specific code. Second,
+if I need to fix a bug in a SQL query, I go straight to the Model file without
+scrolling through routing and response logic. Third, the app.js file in MVC is
+short enough to read in one screen, making it easy to see all the endpoints at a
+glance. Finally, if I need to reuse a database function (like getBookById) in
+multiple places, I can simply import it instead of duplicating code.
+
+
+5. Explain how separating concerns (putting database logic in the Model and request
+handling in the Controller) makes the code better from a development perspective.
+
+Separation of concerns makes development better because each part can be worked on
+and tested independently. If the database schema changes, I only need to edit the
+Model file. If I want to change the response format (like returning XML instead
+of JSON), I only edit the Controller. This isolation also reduces bugs because
+changes in one layer don't accidentally affect others. It also makes the code
+more reusable - the Model functions can be called by different controllers (for
+example, a web controller and a mobile API controller).
+
+Task 2 - Reflection on robustness & security
+
+1. How does implementing input validation middleware make the API more reliable
+and user-friendly? Provide an example of invalid input that your validation would
+now handle.
+
+Input validation middleware makes the API more reliable because invalid data never
+reaches the database, which prevents database errors and corrupted data. It is
+more user-friendly because it returns clear error messages telling the user exactly
+what is wrong, instead of a generic 500 Internal Server Error.
+
+For example, if a user sends a POST /books request with body {"title": "abc"} and
+no author field, the validateBook middleware catches this and returns a 400 Bad
+Request response with the message "Author is required". Without validation, the
+database would throw a NULL constraint error and the user would see a confusing
+500 error with no helpful information.
+
+
+2. Explain in your own words how parameterized queries prevent SQL injection
+attacks. Why is this approach fundamentally more secure than building SQL query
+strings by concatenating variable data?
+
+Parameterized queries work by sending the SQL command structure and the user data
+to the database as two separate things. The database sees the @id placeholder as
+"this is where data will go" and treats whatever value is bound to it strictly as
+data, not as executable SQL code.
+
+This is fundamentally more secure than string concatenation because in
+concatenation, the user input gets glued directly into the SQL string. If a user
+enters something like "1 OR 1=1; DROP TABLE Books;" as an ID, that text becomes
+part of the actual SQL command and gets executed. With parameterized queries, the
+same malicious input would just be treated as a literal string value to search
+for, which would simply find no matches instead of causing damage.
+
+
+3. Consider a potential security risk for an API (other than SQL injection, e.g.,
+brute-force attacks, exposing sensitive data in responses). How might robust error
+handling (like not showing detailed error messages to the client) help mitigate
+such a risk?
+
+One security risk is information disclosure through error messages. If an API
+returns detailed errors like "Login failed for user 'booksapi_user' on server
+'localhost' database 'bed_db'", an attacker learns the username, server, and
+database name - useful info for further attacks.
+
+Robust error handling helps by returning generic messages to the client (like
+"Error retrieving books") while logging the detailed error internally for
+developers. This way the developer can still debug issues using server logs, but
+attackers cannot use error messages to map out the system's internal structure.
+The same approach protects against revealing whether a user account exists during
+login attempts, which helps prevent username enumeration in brute-force attacks.
