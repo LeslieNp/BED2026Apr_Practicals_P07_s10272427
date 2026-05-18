@@ -1,3 +1,5 @@
+const path = require("path");
+
 const express = require("express");
 const sql = require("mssql");
 const dotenv = require("dotenv");
@@ -15,6 +17,8 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/books", bookController.getAllBooks);
 app.get("/books/:id", validateBookId, bookController.getBookById);
