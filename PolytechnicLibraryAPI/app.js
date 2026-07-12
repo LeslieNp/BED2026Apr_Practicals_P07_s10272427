@@ -1,6 +1,8 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const sql = require("mssql");
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./swagger-output.json");
 
 // Load environment variables
 dotenv.config();
@@ -19,15 +21,15 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Swagger UI documentation - accessible at http://localhost:3000/api-docs
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 // ===== PUBLIC ROUTES (no login needed) =====
 app.post("/register", authController.registerUser);
 app.post("/login", authController.loginUser);
 
 // ===== PROTECTED ROUTES (JWT required) =====
-// Both members and librarians can view books
 app.get("/books", verifyJWT, bookController.getAllBooks);
-
-// Only librarians can update availability
 app.put(
   "/books/:bookId/availability",
   verifyJWT,
@@ -37,6 +39,7 @@ app.put(
 // Start server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
+  console.log(`API documentation at http://localhost:${port}/api-docs`);
 });
 
 // Graceful shutdown
